@@ -61,7 +61,7 @@ class NullCameraDistortionModel
 {
 public:
 	NullCameraDistortionModel() {}
-		
+
 	Eigen::Matrix<float, 0, 1> getCoefficients() const { return Eigen::Matrix<float, 0, 1>(); }
 	void setCoefficients(const Eigen::Matrix<float, 0, 1> &coeff) { }
 
@@ -125,7 +125,7 @@ public:
 		distortPoint(x, res);
 		return res;
 	}
-	
+
 	template <class TPointMatA, class TPointMatB>
 	void distortPoint(const Eigen::MatrixBase<TPointMatA> &x, Eigen::MatrixBase<TPointMatB> &xd) const
 	{
@@ -204,7 +204,7 @@ public:
 	void setParams(const TParamVector &coeff) { mLambda = (float)coeff[0]; }
 
 	///////////////////////////
-	// Apply 
+	// Apply
 	inline Eigen::Vector2f apply(const Eigen::Vector2f &x) const;
 
 	template <class TXMat, class TXdMat>

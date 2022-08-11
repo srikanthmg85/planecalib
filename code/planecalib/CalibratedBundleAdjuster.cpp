@@ -101,7 +101,7 @@ void CalibratedBundleAdjuster::addFrameToAdjust(Keyframe &newFrame)
 void CalibratedBundleAdjuster::getInliers()
 {
 	mInlierCount = 0;
-	
+
 	std::vector<float> residuals;
 	residuals.reserve(mMeasurementsInProblem.size());
 
@@ -166,6 +166,7 @@ void CalibratedBundleAdjuster::setCamera(CameraModel *camera)
 	mCamera = camera;
 
 	mPrincipalPoint = mCamera->getPrincipalPoint().cast<double>();
+	MYAPP_LOG << "mPrincipalPoint = " << mPrincipalPoint << std::endl;
 	mParamsDistortion = mCamera->getDistortionModel().getParams();
 	mFocalLengths = mCamera->getFocalLength().cast<double>();
 }
@@ -262,7 +263,7 @@ bool CalibratedBundleAdjuster::bundleAdjust()
 			problem.SetParameterBlockConstant(mPrincipalPoint.data());
 		options.linear_solver_ordering->AddElementToGroup(mPrincipalPoint.data(), 1);
 
-		//Focal lengths 
+		//Focal lengths
 		problem.AddParameterBlock(mFocalLengths.data(), mFocalLengths.size());
 		if (mFixFocalLengths)
 			problem.SetParameterBlockConstant(mFocalLengths.data());

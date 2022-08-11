@@ -52,6 +52,37 @@ void TrackingFrame::initImageData(const cv::Mat3b &imageColor, const cv::Mat1b &
 	cvutils::CalculateDerivatives(mSBI, mSBIdx, mSBIdy);
 }
 
+void TrackingFrame::initImageData(const cv::Mat &imageColor, const CameraModel &camera, const std::map<std::pair<int,int>,Eigen::Vector2f> &features)
+{
+	mColorImage = imageColor;
+	cv::Mat1b imageGray;
+	cv::cvtColor(imageColor,imageGray,cv::COLOR_BGR2GRAY);
+	mOriginalPyramid.create(imageGray, imageColor.cols);
+
+	mWarpedKeypoints.clear();
+	mFiducialCoords.clear();
+
+	//Extract key points
+	mWarpedKeypoints.resize(mOriginalPyramid.getOctaveCount());
+	mFiducialCoords.resize(mOriginalPyramid.getOctaveCount());
+	MYAPP_LOG << "features size " << features.size() << std::endl;
+
+	for (auto it=features.begin(); it!=features.end();it++)
+	{
+		Eigen::Vector2d fiducialCoords{it->first.first,it->first.second};
+		Eigen::Vector2f featurePos = it->second - camera.getPrincipalPoint();
+		cv::Point2f pos(featurePos[0],featurePos[1]);
+		cv::KeyPoint kp;
+
+		kp.octave = 0;
+		kp.pt = pos;
+		kp.size = 1;
+		mWarpedKeypoints[0].push_back(kp);
+		mFiducialCoords[0].push_back(fiducialCoords);
+	}
+	MYAPP_LOG << "Added " << mWarpedKeypoints[0].size() << " keypoints " << std::endl;
+}
+
 Eigen::Vector2f TrackingFrame::warpKey2Img(const Eigen::Vector2f &keyp)
 {
 	//const Eigen::Vector3f keyx = mWarpCamera.unprojectToWorld(keyp);
@@ -147,6 +178,38 @@ void Keyframe::init(const cv::Mat3b &imageColor, const cv::Mat1b &imageGray)
 
 	createKeypoints();
 }
+
+void Keyframe::init(const cv::Mat &imageColor, const std::map<std::pair<int,int>,Eigen::Vector2f> &fiducials)
+{
+	mColorImage = imageColor;
+	cv::Mat1b imageGray;
+	cv::cvtColor(mColorImage,imageGray,cv::COLOR_BGR2GRAY);
+	mPyramid.create(imageGray, imageColor.cols);
+
+	MYAPP_LOG << "mPyramid.getOctaveCount() = " << mPyramid.getOctaveCount() << std::endl;
+	auto keypoints = *mKeypoints;
+
+	keypoints.clear();
+	mFiducialCoords.clear();
+
+	//Extract key points
+	keypoints.resize(mPyramid.getOctaveCount());
+	mFiducialCoords.resize(mPyramid.getOctaveCount());
+
+	for (auto it=fiducials.begin(); it!=fiducials.end();it++)
+	{
+		Eigen::Vector2d fiducialCoords{it->first.first,it->first.second};
+		cv::Point2f pos(it->second[0],it->second[1]);
+		cv::KeyPoint kp;
+
+		kp.octave = 0;
+		kp.pt = pos;
+		kp.size = 1;
+		keypoints[0].push_back(kp);
+		mFiducialCoords[0].push_back(fiducialCoords);
+	}
+}
+
 
 void Keyframe::init(const TrackingFrame &other)
 {

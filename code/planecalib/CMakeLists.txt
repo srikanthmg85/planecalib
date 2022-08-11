@@ -21,4 +21,3 @@ target_include_directories(planecalib PUBLIC ${EIGEN_INCLUDE_DIR} ${CERES_INCLUD
 target_link_libraries(planecalib PUBLIC  glog gflags ceres ${OpenCV_LIBRARIES})
 include_directories(${OpenCV_INCLUDE_DIRS})
 target_include_directories(planecalib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/.. PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-

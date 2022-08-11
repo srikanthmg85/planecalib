@@ -294,7 +294,9 @@ void HomographyCalibration::calibrateNonLinear(const std::vector<Eigen::Matrix3d
 	ceres::Solve(options, &problem, &summary);
 	}
 	//Update
-	mPrincipalPoint += pp;
+	// mPrincipalPoint += pp;
+	mPrincipalPoint = pp;
+
 	mFocalLengths[0] = mFocalLengths[1] = alpha;
 
 	//Show
