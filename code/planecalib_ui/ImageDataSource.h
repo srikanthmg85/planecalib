@@ -46,7 +46,7 @@ protected:
     cv::Mat1b mImgGray;
     cv::Mat3b mImgColor;
 
-    void setSourceSize(const cv::Size &sz);
+    virtual void setSourceSize(const cv::Size &sz);
     void createBuffers();
     void releaseGl();
     void update(const cv::Mat3b &source, double captureTime);

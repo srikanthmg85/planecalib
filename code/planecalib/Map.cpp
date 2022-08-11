@@ -121,4 +121,28 @@ Feature *Map::createFeature(Keyframe &keyframe, const Eigen::Matrix3fr &poseInv,
 	return pfeature;
 }
 
+Feature *Map::createFiducial(Keyframe &keyframe, const Eigen::Matrix3fr &poseInv, const Eigen::Vector2f &position, int octave, const Eigen::Vector2d &fiducialCoords)
+{
+	int scale = 1;
+
+	//Create feature
+	std::unique_ptr<Feature> feature(new Feature());
+
+	Eigen::Vector2f pos = eutils::HomographyPoint(poseInv, position);
+	Eigen::Vector2f posPlusOne = eutils::HomographyPoint(poseInv, position+Eigen::Vector2f(scale,0));
+
+	feature->mPosition = pos;
+	feature->mPlusOneOffset = posPlusOne - pos;
+
+	//Create measurement
+	feature->mMeasurements.emplace_back(new FeatureMeasurement(feature.get(), &keyframe, position, octave, fiducialCoords));
+	keyframe.getMeasurements().push_back(feature->mMeasurements.back().get());
+
+	//Add feature to map
+	Feature *pfeature = feature.get();
+	mFeatures.push_back(std::move(feature));
+
+	return pfeature;
+}
+
 }

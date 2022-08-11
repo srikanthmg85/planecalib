@@ -66,7 +66,7 @@ public:
 		return m;
 	}
 
-	static Eigen::Vector2i FromSize(const cv::Size2i &sz) 
+	static Eigen::Vector2i FromSize(const cv::Size2i &sz)
 	{
 		return Eigen::Vector2i(sz.width, sz.height);
 	}

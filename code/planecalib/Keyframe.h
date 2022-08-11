@@ -9,7 +9,7 @@
 #define KEYFRAME_H_
 
 #include <gflags/gflags.h>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 #include <unordered_map>
 #include "eutils.h"
 #include "ImagePyramid.h"
@@ -74,6 +74,7 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	void initImageData(const cv::Mat3b &imageColor, const cv::Mat1b &imageGray);
+	void initImageData(const cv::Mat &imageColor, const CameraModel &camera,const std::map<std::pair<int,int>,Eigen::Vector2f> &features);
 
 	//lastx = warpPose*keyx
 	void createKeypoints(const Eigen::Matrix3fr &warpOpticalHomography, const CameraModel &camera, const Eigen::Matrix3fr &warpPose);
@@ -98,6 +99,7 @@ public:
 
 	const std::vector<cv::KeyPoint> &getWarpedKeypoints(int octave) const { return mWarpedKeypoints[octave]; }
 	const EigenDescriptorMap &getWarpedDescriptors(int octave) const	{ return mWarpedDescriptors[octave]; }
+	const std::vector<Eigen::Vector2d> &getFiducialCoords(int octave) const { return mFiducialCoords[octave]; }
 
 	std::vector<FeatureMatch> &getMatches() { return mMatches; }
 	const std::vector<FeatureMatch> &getMatches() const { return mMatches; }
@@ -129,7 +131,7 @@ protected:
 	ImagePyramid1b mWarpedPyramid;
 
 	std::vector<std::vector<cv::KeyPoint>> mWarpedKeypoints;
-
+	std::vector<std::vector<Eigen::Vector2d>> mFiducialCoords;
 	std::vector<cv::Mat1b> mWarpedDescriptorBuffers;
 	std::vector<EigenDescriptorMap> mWarpedDescriptors;
 
@@ -150,7 +152,8 @@ public:
 
 	void init(const cv::Mat3b &imageColor, const cv::Mat1b &imageGray);
 	void init(const TrackingFrame &other);
-	
+	void init(const cv::Mat &imageColor, const std::map<std::pair<int,int>,Eigen::Vector2f> &features);
+
 	static void CreateKeypoints(const ImagePyramid1b &pyramid, std::vector<std::vector<cv::KeyPoint>> &keypoints, std::vector<cv::Mat1b> &descriptorBuffers, std::vector<EigenDescriptorMap> &descriptors);
 
 	std::unique_ptr<Keyframe> copyWithoutFeatures() const;
@@ -209,6 +212,7 @@ protected:
 	std::shared_ptr<std::vector<std::vector<cv::KeyPoint>>> mKeypoints;
 
 	std::vector<cv::Mat1b> mDescriptors;
+	std::vector<std::vector<Eigen::Vector2d>> mFiducialCoords;
 	std::vector<EigenDescriptorMap> mDescriptorsEigen;
 
 	Eigen::Matrix3fr mPose; //image = mPose * world

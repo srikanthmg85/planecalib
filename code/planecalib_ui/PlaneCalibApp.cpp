@@ -28,9 +28,11 @@
 #include "planecalib/PlaneCalibSystem.h"
 #include "planecalib/PoseTracker.h"
 #include "planecalib/HomographyCalibration.h"
+#include "planecalib/FiducialCalibSystem.h"
 
 #include "OpenCVDataSource.h"
 #include "SequenceDataSource.h"
+#include "MatchesDataSource.h"
 #include "UserInterfaceInfo.h"
 #include "ViewportTiler.h"
 
@@ -53,10 +55,67 @@ PlaneCalibApp::PlaneCalibApp()
 		  mRecordVideo(false)
 
 {
+	MYAPP_LOG << "Init done " << std::endl;
 }
 
 PlaneCalibApp::~PlaneCalibApp()
 {
+}
+
+bool PlaneCalibApp::init(bool fiducials)
+{
+	MYAPP_LOG << "PlaneCalibApp init." << std::endl;
+	MYAPP_LOG << "image source init." << std::endl;
+
+	mFiducialSrc.reset(new MatchesDataSource());
+	mFiducialSrc->open(FLAGS_FolderPath,0);
+	mFiducialSystem.reset(new FiducialCalibSystem());
+
+	// mFiducialSystem->init();
+	std::map<std::pair<int,int>, Eigen::Vector2f> features;
+
+	auto img = mFiducialSrc->readImage(0);
+	mFiducialSrc->readFeatures(0,features);
+	int numChannels = img.channels();
+
+	if(numChannels == 1)
+		cv::cvtColor(img,img,cv::COLOR_GRAY2RGB);
+
+	MYAPP_LOG << "Calling System init\n";
+	mFiducialSystem->init(0,img,features);
+	mFiducialSystem->processMeasurements(features,img);
+	MYAPP_LOG << "PlaneCalibApp init done\n";
+
+	return true;
+
+}
+
+void PlaneCalibApp::processFiducialMatches()
+{
+	MYAPP_LOG << "Starting Processing\n";
+	int idx = 1;
+
+	while(true){
+		std::map<std::pair<int,int>, Eigen::Vector2f> features;
+		MYAPP_LOG << "Processing " << idx << std::endl;
+		bool success = mFiducialSrc->readFeatures(idx,features);
+		if(!success){
+			MYAPP_LOG << "End of Sequence\n";
+			break;
+		}
+		cv::Mat img = mFiducialSrc->readImage(idx);
+
+		// mFiducialSystem->processMeasurements(features,img);
+		mFiducialSystem->processImage(idx,img,features);
+		idx += 1;
+	}
+
+	// MYAPP_LOG << "Calibrating camera with homographies\n";
+	// mFiducialSystem->calibrate();
+	mFiducialSystem->doHomographyBA();
+	mFiducialSystem->doHomographyCalib(false);
+	mFiducialSystem->doFullBA();
+
 }
 
 // Initialization for this application
@@ -248,7 +307,25 @@ void PlaneCalibApp::resize()
 bool PlaneCalibApp::initImageSrc()
 {
 	mUsingCamera = false;
-	if(!FLAGS_VideoFile.empty())
+	mUsingFiducials = false;
+	if(!FLAGS_FolderPath.empty())
+	{
+		//Use camera
+		std::string sequence = FLAGS_FolderPath;
+
+		MYAPP_LOG << "Matches sequence: " << sequence << "\n";
+		MatchesDataSource *source = new MatchesDataSource();
+	    mImageSrc.reset(source);
+	    if(!source->open(sequence, 0))
+	    {
+			MYAPP_LOG << "Error opening sequence.\n";
+	        return NULL;
+	    }
+		mUsingFiducials = true;
+
+		MYAPP_LOG << "Opened Matches sequence succesfully\n";
+	}
+	else if(!FLAGS_VideoFile.empty())
 	{
 		//Use video file
 	    std::string videoFilename = FLAGS_VideoFile;

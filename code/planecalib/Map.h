@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <atomic>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 #include "eutils.h"
 #include "Keyframe.h"
 #include "CameraModel.h"
@@ -42,6 +42,8 @@ public:
 	void getFeaturesInView(const Eigen::Matrix3fr &opticalHomography, const CameraModel &camera, const Eigen::Matrix3fr &pose, int octaveCount, std::unordered_set<const Feature*> &featuresToIgnore, std::vector<std::vector<FeatureProjectionInfo>> &featuresInView);
 
 	Feature *createFeature(Keyframe &keyframe, const Eigen::Matrix3fr &poseInv, const Eigen::Vector2f &position, int octave, const uchar *descriptor);
+	Feature *createFiducial(Keyframe &keyframe, const Eigen::Matrix3fr &poseInv, const Eigen::Vector2f &position, int octave, const Eigen::Vector2d &fiducialCoords);
+
 	void addFeature(std::unique_ptr<Feature> newFeature);
 
 	void moveToGarbage(Feature &feature);
@@ -106,6 +108,12 @@ public:
 		mDescriptor = descMap;
 	}
 
+	FeatureMeasurement(Feature *feature, Keyframe *keyframe, const Eigen::Vector2f &position, int octave, const Eigen::Vector2d &fiducialCoords) :
+		mFeature(feature), mKeyframe(keyframe), mPosition(position), mOctave(octave)
+	{
+		mFiducialCoords = fiducialCoords;
+	}
+
 	Feature &getFeature() const {return *mFeature;}
 	Keyframe &getKeyframe() const {return *mKeyframe;}
 	const Eigen::Matrix3fr &getFramePose() const { return mKeyframe->getPose(); } //Shortcut
@@ -115,6 +123,7 @@ public:
 	const cv::Mat1b &getImage() const {return mKeyframe->getImage(mOctave);}
 
 	const Eigen::Matrix<uchar,1,32> &getDescriptor() const { return mDescriptor; }
+	const Eigen::Vector2d &getFiducialCoords() const {return mFiducialCoords; }
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -126,6 +135,7 @@ protected:
 	int mOctave;
 
 	Eigen::Matrix<uchar, 1, 32> mDescriptor;
+	Eigen::Vector2d mFiducialCoords;
 };
 
 class FeatureProjectionInfo

@@ -51,7 +51,7 @@ bool P0Regularizer::operator() (const T * const _p0, T *residuals) const
 
 	residuals[0] = scale*(T(mRef[0]) - T(_p0[0]));
 	residuals[1] = scale*(T(mRef[1]) - T(_p0[1]));
-	
+
 	return true;
 }
 
@@ -108,11 +108,13 @@ bool ReprojectionError::operator () (const T * const _p0, const T * const _disto
 	//Camera model
 	const Eigen::Matrix<T, 2, 1> focal(T(1), T(1));
 	Eigen::Matrix<T, 2, 1> p;
+
 	CameraModel::ProjectFromWorld(p0, distortion, focal, xh, p);
-	
+
 	//Residuals
 	residuals[0] = (T(mImgPoint.x()) - p[0]) / T(mScale);
 	residuals[1] = (T(mImgPoint.y()) - p[1]) / T(mScale);
+
 	return true;
 }
 
@@ -123,8 +125,8 @@ bool ReprojectionError::operator () (const T * const _p0, const T * const _disto
 void BundleAdjuster::setCamera(CameraModel *camera)
 {
 	mCamera = camera;
-
-	mParamsPrincipalPoint = mCamera->getPrincipalPoint().cast<double>();
+	mParamsPrincipalPoint << 0,0;
+	// mParamsPrincipalPoint = mCamera->getPrincipalPoint().cast<double>();
 	mParamsDistortion = mCamera->getDistortionModel().getParams();
 }
 
@@ -155,7 +157,7 @@ bool BundleAdjuster::isInlier(const FeatureMeasurement &measurement)
 	Eigen::Vector2d residuals;
 	ReprojectionError err(measurement);
 	err(mParamsPrincipalPoint, mParamsDistortion, measurement.getKeyframe().mParamsPose, measurement.getFeature().mParams, residuals);
-	
+
 	return residuals.squaredNorm() <= mOutlierPixelThresholdSq;
 }
 
@@ -216,6 +218,10 @@ bool BundleAdjuster::bundleAdjust()
 			lockRead.lock();
 
 		//assert(mMap->getKeyframes().size() >= 2);
+
+		MYAPP_LOG << "Num frames to adjust = " << mFramesToAdjust.size() << std::endl;
+		MYAPP_LOG << "Num features to adjust = " << mFeaturesToAdjust.size() << std::endl;
+
 		assert(!mFramesToAdjust.empty());
 		assert(!mFeaturesToAdjust.empty());
 
@@ -242,7 +248,7 @@ bool BundleAdjuster::bundleAdjust()
 			else if (mOnlyDistortion)
 			{
 				problem.SetParameterBlockConstant(params.data());
-			}			
+			}
 
 		}
 
@@ -334,6 +340,7 @@ bool BundleAdjuster::bundleAdjust()
 	getInliers(inlierCount, outliers);
 	MYAPP_LOG << "BA inlier count before: " << inlierCount << " / " << mMeasurementsInProblem.size() << "\n";
 
+#if 1
 	//No locks while ceres runs
 	//Non-linear minimization!
 	ceres::Solver::Summary summary;
@@ -362,7 +369,7 @@ bool BundleAdjuster::bundleAdjust()
 	MYAPP_LOG << "BA inlier count after: " << inlierCount << " / " << mMeasurementsInProblem.size() << "\n";
 
 	//Update camera
-	mCamera->getPrincipalPoint() = mParamsPrincipalPoint.cast<float>();
+	// mCamera->getPrincipalPoint() = mParamsPrincipalPoint.cast<float>();
 	mCamera->getDistortionModel().setParams(mParamsDistortion);
 
 	//Update pose
@@ -407,6 +414,7 @@ bool BundleAdjuster::bundleAdjust()
 		}
 	}
 	MYAPP_LOG << "Removed " << outliers.size() << " outliers\n";
+#endif
 
 	return true;
 }

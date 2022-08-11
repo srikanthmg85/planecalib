@@ -20,8 +20,9 @@ namespace planecalib
 {
 
 class PlaneCalibSystem;
-
+class FiducialCalibSystem;
 class ImageDataSource;
+class MatchesDataSource;
 class OpenCVDataSource;
 
 class PlaneCalibApp: public Application
@@ -32,7 +33,9 @@ private:
     int mFrameCount;
 
     bool mUsingCamera;
+    bool mUsingFiducials;
     std::unique_ptr<ImageDataSource> mImageSrc;
+    std::unique_ptr<MatchesDataSource> mFiducialSrc;
     int mDownsampleInputCount;
     Eigen::Vector2i mImageSize;
 
@@ -61,6 +64,7 @@ private:
 	int mFPSSampleCount;
 
 	std::unique_ptr<PlaneCalibSystem> mSystem;
+    std::unique_ptr<FiducialCalibSystem> mFiducialSystem;
 
     std::vector<std::unique_ptr<BaseWindow>> mWindows;
     BaseWindow *mActiveWindow;
@@ -77,6 +81,7 @@ public:
 	PlaneCalibSystem &getSystem() { return *mSystem; }
 
     bool init();
+    bool init(bool fiducials);
     void resize();
     void exit();
     bool loop() {return mQuit;}
@@ -88,7 +93,8 @@ public:
     void touchUp(int id, int x, int y);
 
     void draw(void);
-	
+    void processFiducialMatches();
+
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:

@@ -11,6 +11,8 @@
 #define GFLAGS_DLL_DEFINE_FLAG
 #include <gflags/gflags.h>
 
+#define USE_FIDUCIALS 1
+
 namespace planecalib
 {
 ///////////////////////////////////////////////////////
@@ -30,6 +32,7 @@ DEFINE_int32(InputMaxImageWidth, 960, "Maximum width of input image. Input will 
 DEFINE_bool(SingleThreaded, false, "Use a single thread for easier debugging.");
 DEFINE_string(RecordPath, "record/", "Path where the frames will be stored in case of recording.");
 DEFINE_string(RecordVideoFile, "video.avi", "Output video file for recording.");
+DEFINE_string(FolderPath,"","Path where images and matches are found");
 
 ///////////////////////////////////////////////////////
 
@@ -112,13 +115,29 @@ void mouseMoveEvent(int x, int y)
 
 int main(int argc, char**argv)
 {
+
+#if USE_FIDUCIALS
 	google::ParseCommandLineFlags(&argc, &argv, true);
+	MYAPP_LOG << "Calling Plane calib app " << std::endl;
+	gApp = new planecalib::PlaneCalibApp();
+	if (!gApp->init(true))
+	{
+		MYAPP_LOG << "Failed " << std::endl;
+		delete gApp;
+		return 1;
+	}
+	MYAPP_LOG << "Calling Process " << std::endl;
+	gApp->processFiducialMatches();
 
-	//cv::Size initialSize(1980,1040);
+#else
+	google::ParseCommandLineFlags(&argc, &argv, true);
+	MYAPP_LOG << "Started application\n ";
+	// cv::Size initialSize(1980,1040);
 	Eigen::Vector2i initialSize(planecalib::FLAGS_WindowWidth, planecalib::FLAGS_WindowHeight);
-
+	MYAPP_LOG << "Calling  glutInit\n ";
 	//init GLUT and create window
 	glutInit(&argc, argv );
+	MYAPP_LOG << "Calling  glutInit done\n ";
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_ALPHA | GLUT_MULTISAMPLE);
 	//glutInitWindowPosition(900,10);
 	glutInitWindowSize(initialSize.x(),initialSize.y());
@@ -158,5 +177,6 @@ int main(int argc, char**argv)
 	// enter GLUT event processing cycle
 	glutMainLoop();
 
+#endif
 	return 0;
 }

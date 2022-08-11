@@ -23,6 +23,7 @@ namespace planecalib
 	DECLARE_bool(SingleThreaded);
 	DECLARE_string(RecordPath);
 	DECLARE_string(RecordVideoFile);
+	DECLARE_string(FolderPath);
 	//
 	//DECLARE_double(MapDrawScale);
 }
