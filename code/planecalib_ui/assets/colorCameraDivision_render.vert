@@ -26,7 +26,7 @@ void main(void)
 	//Distort
 	float r2 = dot(xn,xn);
 	float r4 = r2*r2;
-	float factor = 1.0f/(1.0f + uLambda*r2);
+	float factor = 1.0/(1.0 + uLambda*r2);
 	vec2 xd = factor*xn;
 	
 	//PP

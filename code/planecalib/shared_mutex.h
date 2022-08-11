@@ -19,7 +19,7 @@
 #ifdef _MSC_VER
 #define THROW_ERROR(x) std::_Throw_Cpp_error(x)
 #else
-#define THROW_ERROR(x) std::__throw_system_error(x)
+#define THROW_ERROR(x) std::__throw_system_error(x,"error")
 #endif
 
 namespace planecalib

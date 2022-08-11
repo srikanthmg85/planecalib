@@ -26,8 +26,8 @@ endif()
 
 find_package(Ceres REQUIRED QUIET PATHS "${EP_PREFIX}")
 
-#add_definitions(-DGLEW_STATIC=1 -DFREEGLUT_STATIC=1
-#   -DFREEGLUT_LIB_PRAGMAS=0 -DGLOG_NO_ABBREVIATED_SEVERITIES=1)
+add_definitions(-DGLEW_STATIC=1 -DFREEGLUT_STATIC=1
+   -DFREEGLUT_LIB_PRAGMAS=0 -DGLOG_NO_ABBREVIATED_SEVERITIES=1)
 add_definitions(-DGLOG_NO_ABBREVIATED_SEVERITIES=1)
 
 #Eigen
@@ -46,7 +46,7 @@ endif()
 
 #Ceres
 #include_directories("${Ceres_DIR}/../include")
-	
+
 if(WIN32)
 	add_definitions( "/wd4251" )
 endif()

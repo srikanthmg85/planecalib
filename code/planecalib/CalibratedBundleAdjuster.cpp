@@ -186,7 +186,7 @@ bool CalibratedBundleAdjuster::bundleAdjust()
 
 	options.max_num_iterations = 500;
 	options.num_threads = 4;
-	options.num_linear_solver_threads = 4;
+	// options.num_linear_solver_threads = 4;
 	options.logging_type = ceres::SILENT;
 
 	options.minimizer_progress_to_stdout = false;

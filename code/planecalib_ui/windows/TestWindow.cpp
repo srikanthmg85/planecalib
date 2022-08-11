@@ -65,10 +65,10 @@ T ImageInterpolation::interpolate(const cv::Mat_<T> &img, const double x, const 
 {
 	int x0 = (int)x;
 	int y0 = (int)y;
-	
+
 	double dx = x - x0;
 	double dy = y - y0;
-	
+
 	int x1 = x0+1;
 	if (x1 == img.cols)
 		x1--;
@@ -237,7 +237,7 @@ void TestWindow::alignAffine(const cv::Mat1b &img, const cv::Mat1s &imgDx, const
 
 	options.max_num_iterations = 500;
 	options.num_threads = 4;
-	options.num_linear_solver_threads = 4;
+	// options.num_linear_solver_threads = 4;
 	options.logging_type = ceres::SILENT;
 	options.minimizer_progress_to_stdout = false;
 
@@ -247,7 +247,7 @@ void TestWindow::alignAffine(const cv::Mat1b &img, const cv::Mat1s &imgDx, const
 	//paramsA << 0,0;
 	//paramsB << 1, 0, 0, 1;
 	//paramsC << 0, 0, 1;
-	
+
 	Eigen::Matrix3fr pose0;
 	//pose0 = Eigen::Matrix3f::Identity();
 	pose0 = pose;
@@ -311,7 +311,7 @@ void TestWindow::alignHomography(const cv::Mat1b &img, const cv::Mat1s &imgDx, c
 
 	options.max_num_iterations = 500;
 	options.num_threads = 4;
-	options.num_linear_solver_threads = 4;
+	// options.num_linear_solver_threads = 4;
 	options.logging_type = ceres::SILENT;
 	options.minimizer_progress_to_stdout = false;
 
@@ -332,7 +332,7 @@ void TestWindow::alignHomography(const cv::Mat1b &img, const cv::Mat1s &imgDx, c
 	ceres::Problem problem;
 	problem.AddParameterBlock(paramsA.data(), paramsA.size());
 	problem.AddParameterBlock(paramsB.data(), paramsB.size());
-	
+
 	//std::vector<int> constantIdx;
 	//constantIdx.push_back(2);
 	//problem.AddParameterBlock(paramsC.data(), paramsC.size(), new ceres::SubsetParameterization(3,constantIdx));
@@ -358,7 +358,7 @@ void TestWindow::alignHomography(const cv::Mat1b &img, const cv::Mat1s &imgDx, c
 	MYAPP_LOG << "ParamsB: " << paramsB << "\n";
 	MYAPP_LOG << "ParamsC: " << paramsC << "\n";
 
-	pose << paramsB[0], paramsB[1], paramsA[0], paramsB[2], paramsB[3], paramsA[1], paramsC[0], paramsC[1], paramsC[2];	
+	pose << paramsB[0], paramsB[1], paramsA[0], paramsB[2], paramsB[3], paramsA[1], paramsC[0], paramsC[1], paramsC[2];
 
 	//Cost
 	std::vector<double> residuals;

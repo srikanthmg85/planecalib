@@ -7,21 +7,21 @@ include(config_external_project)
 
 set(FREEGLUT_ROOT_DIR freeglut-2.8.1)
 set(GLEW_ROOT_DIR glew-1.11.0)
-set(EIGEN_ROOT_DIR eigen-3.2.2)
+set(EIGEN_ROOT_DIR eigen-3.4)
 set(GFLAGS_ROOT_DIR gflags-2.1.1)
 set(GLOG_ROOT_DIR glog-0.3.3)
 set(SUITESPARSE_METIS_ROOT_DIR suitesparse-metis-for-windows-1.2.1)
-set(CERES_SOLVER_ROOT_DIR ceres-solver-1.9.0)
-set(OPENCV_ROOT_DIR opencv-git)
+set(CERES_SOLVER_ROOT_DIR ceres-solver)
+set(OPENCV_ROOT_DIR opencv)
 
 set(DEBUG_DLL_GLOB_PATTERNS)
 set(RELEASE_DLL_GLOB_PATTERNS)
 
 # freeglut --------------------------------------------------
-ConfigExternalProject(freeglut
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/freeglut_cmake
-    CMAKE_ARGS -DFREEGLUT_ROOT_DIR:STRING=${FREEGLUT_ROOT_DIR}
-               -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE)
+#ConfigExternalProject(freeglut
+#    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/freeglut_cmake
+#    CMAKE_ARGS -DFREEGLUT_ROOT_DIR:STRING=${FREEGLUT_ROOT_DIR}
+#               -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE)
 
 # glew --------------------------------------------------
 ConfigExternalProject(glew
@@ -52,7 +52,7 @@ list(APPEND RELEASE_DLL_GLOB_PATTERNS "${EP_PREFIX}/${OpenCV_ARCH}/${OpenCV_RUNT
 #     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${GFLAGS_ROOT_DIR}
 #     CMAKE_ARGS -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE
 #     CMAKE_CACHE_ARGS -DGFLAGS_NAMESPACE:STRING=google)
-# 
+#
 # # we must fix the gflags-config, the gflags target is gflags-static!
 # if(WIN32)
 #     set(gflags_DIR "${EP_PREFIX}/CMake")
@@ -67,11 +67,11 @@ list(APPEND RELEASE_DLL_GLOB_PATTERNS "${EP_PREFIX}/${OpenCV_ARCH}/${OpenCV_RUNT
 
 
 # glog --------------------------------------------------------------------
-ConfigExternalProject(glog
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog_cmake
-    CMAKE_ARGS -DGLOG_ROOT_DIR:STRING=${GLOG_ROOT_DIR}
-               -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE
-    CMAKE_CACHE_ARGS -DCMAKE_DEBUG_POSTFIX:STRING= )
+#ConfigExternalProject(glog
+#    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog_cmake
+#    CMAKE_ARGS -DGLOG_ROOT_DIR:STRING=${GLOG_ROOT_DIR}
+#               -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE
+#    CMAKE_CACHE_ARGS -DCMAKE_DEBUG_POSTFIX:STRING= )
 
 # suitesparse-metis -------------------------------------------------------
 set(suitesparse_dir "${CMAKE_CURRENT_SOURCE_DIR}/${SUITESPARSE_METIS_ROOT_DIR}")

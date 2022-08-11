@@ -172,9 +172,9 @@ void Keyframe::CreateKeypoints(const ImagePyramid1b &pyramid, std::vector<std::v
 	descriptors.reserve(pyramid.getOctaveCount());
 
     //Different opencv version:
-    //cv::Ptr<cv::ORB> orb = cv::ORB::create(2000, 2, 1);
-	//orb->setEdgeThreshold(0);
-    cv::ORB orb(2000, 2, 1, 0);
+    cv::Ptr<cv::ORB> orb = cv::ORB::create(2000, 2, 1);
+	orb->setEdgeThreshold(0);
+    // cv::ORB orb(2000, 2, 1, 0);
 
 	for (int octave = 0; octave < pyramid.getOctaveCount(); octave++)
 	{
@@ -188,8 +188,8 @@ void Keyframe::CreateKeypoints(const ImagePyramid1b &pyramid, std::vector<std::v
 		//ORB features
         //Different opencv version:
 		//orb->detectAndCompute(pyramid[octave], cv::noArray(), keypointsAll, descriptorsAll);
-        orb.detect(pyramid[octave], keypointsAll);
-        orb.compute(pyramid[octave], keypointsAll, descriptorsAll);
+        orb->detect(pyramid[octave], keypointsAll);
+        orb->compute(pyramid[octave], keypointsAll, descriptorsAll);
 
         //Fix scale features
 		for (int i = 0; i < (int)keypointsAll.size(); i++)

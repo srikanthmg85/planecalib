@@ -232,7 +232,7 @@ void PnPRefiner::refinePose(const std::vector<Eigen::Vector3f> &refPoints,
 	//options.dense_linear_algebra_library_type = ceres::LAPACK;
 
 	options.num_threads = 1; //Multi-threading here adds too much overhead
-	options.num_linear_solver_threads = 1;
+	// options.num_linear_solver_threads = 1;
 
 	options.logging_type = ceres::SILENT;
 	options.minimizer_progress_to_stdout = false;

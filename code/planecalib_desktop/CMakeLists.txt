@@ -19,17 +19,18 @@ list(APPEND sources_cpp "main.cpp")
 # Target
 
 add_executable(planecalib_desktop ${sources_cpp} ${sources_h})
-target_link_libraries (planecalib_desktop planecalib_ui planecalib gflags-static freeglut) 
+#target_link_libraries (planecalib_desktop planecalib_ui planecalib gflags glut)
+target_link_libraries (planecalib_desktop planecalib_ui planecalib gflags FreeGLUT::freeglut)
 
 #INSTALL_TARGET_WITH_DEPS(planecalib_desktop ${3RD_PARTY_DIR}/bin)
 #install(DIRECTORY ${CMAKE_SOURCE_DIR}/planecalib/assets DESTINATION .)
 #install(DIRECTORY ${CMAKE_SOURCE_DIR}/planecalib_ui/assets DESTINATION .)
 
-add_custom_command(TARGET planecalib_desktop POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/planecalib/assets $<TARGET_FILE_DIR:planecalib_desktop>/assets)
+#add_custom_command(TARGET planecalib_desktop POST_BUILD
+#	COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/planecalib/assets $<TARGET_FILE_DIR:planecalib_desktop>/assets)
 add_custom_command(TARGET planecalib_desktop POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/planecalib_ui/assets $<TARGET_FILE_DIR:planecalib_desktop>/assets)
-	
+
 
 if(WIN32)
     # assets must be copied also to current_binary_dir in MSVC so that it can be run

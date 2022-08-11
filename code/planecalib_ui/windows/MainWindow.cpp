@@ -238,7 +238,7 @@ void MainWindow::draw()
 
 	mShaders->getTexture().setMVPMatrix(mTiler.getMVP());
 	mShaders->getTexture().renderTexture(mDisplayTextureTarget, mDisplayTextureId, mImageSize, 1.0f);
-			
+
 	mShaders->getColor().setMVPMatrix(mTiler.getMVP());
 	mShaders->getColor().drawVertices(GL_POINTS, mDisplayPoints.data(), mDisplayColors.data(), mDisplayPoints.size());
 
@@ -252,7 +252,7 @@ void MainWindow::draw()
 	mShaders->getTexture().renderTexture(mRefTexture.getTarget(), mRefTexture.getId(), mImageSize, 1.0f);
 	//if (!mIsLost)
 		mShaders->getTextureWarp().renderTextureFixedAlpha(mCurrentImageTextureTarget, mCurrentImageTextureId, mTrackerPose, 0.5f, mImageSize);
-	
+
 	std::vector<Eigen::Vector2f> pointsSrc;
 	pointsSrc.push_back(Eigen::Vector2f(0, 0));
 	pointsSrc.push_back(Eigen::Vector2f(mImageSize[0], 0));
@@ -442,7 +442,7 @@ void MainWindow::synthTest()
 			mSystem->doHomographyCalib(true);
 			mSystem->doFullBA();
 
-			//Record 
+			//Record
 			error.compute(camera, mSystem->getCamera());
 			MatlabDataLog::AddValue("errorFocal", error.errorFocal);
 			MatlabDataLog::AddValue("errorP0", error.errorP0);
@@ -453,7 +453,7 @@ void MainWindow::synthTest()
 			mSystem->setFix3DPoints(false);
 			mSystem->doFullBA();
 
-			//Record 
+			//Record
 			error.compute(camera, mSystem->getCamera());
 			MatlabDataLog::AddValue("errorFocalBA", error.errorFocal);
 			MatlabDataLog::AddValue("errorP0BA", error.errorP0);
@@ -464,7 +464,7 @@ void MainWindow::synthTest()
 			mSystem->setFix3DPoints(true);
 			mSystem->doFullBA();
 
-			//Record 
+			//Record
 			error.compute(camera, mSystem->getCamera());
 			MatlabDataLog::AddValue("errorFocalBAFixed", error.errorFocal);
 			MatlabDataLog::AddValue("errorP0BAFixed", error.errorP0);
@@ -721,7 +721,7 @@ void MainWindow::synthTestCompareUsingGroundTruth()
 			mSystem->doHomographyCalib(true);
 			mSystem->doFullBA();
 
-			//Record 
+			//Record
 			error.compute(camera, mSystem->getCamera());
 			MatlabDataLog::AddValue("errorFocal", error.errorFocal);
 			MatlabDataLog::AddValue("errorP0", error.errorP0);
@@ -732,7 +732,7 @@ void MainWindow::synthTestCompareUsingGroundTruth()
 			mSystem->setFix3DPoints(false);
 			mSystem->doFullBA();
 
-			//Record 
+			//Record
 			error.compute(camera, mSystem->getCamera());
 			MatlabDataLog::AddValue("errorFocalBA", error.errorFocal);
 			MatlabDataLog::AddValue("errorP0BA", error.errorP0);
@@ -743,7 +743,7 @@ void MainWindow::synthTestCompareUsingGroundTruth()
 			mSystem->setFix3DPoints(true);
 			mSystem->doFullBA();
 
-			//Record 
+			//Record
 			error.compute(camera, mSystem->getCamera());
 			MatlabDataLog::AddValue("errorFocalBAFixed", error.errorFocal);
 			MatlabDataLog::AddValue("errorP0BAFixed", error.errorP0);
@@ -858,11 +858,11 @@ void MainWindow::synthTest2()
 	//Mat_VarFree(varRoot);
 	//Mat_Close(mat);
 
-	MatlabDataLog::Instance().AddValue("noise", noiseStdVec);
-	MatlabDataLog::Instance().AddValue("errorFocal", errorFocal);
-	MatlabDataLog::Instance().AddValue("errorP0", errorP0);
-	MatlabDataLog::Instance().AddValue("errorDist0", errorDist0);
-	MatlabDataLog::Instance().AddValue("errorDist1", errorDist1);
+	// MatlabDataLog::Instance().AddValue("noise", noiseStdVec);
+	// MatlabDataLog::Instance().AddValue("errorFocal", errorFocal);
+	// MatlabDataLog::Instance().AddValue("errorP0", errorP0);
+	// MatlabDataLog::Instance().AddValue("errorDist0", errorDist0);
+	// MatlabDataLog::Instance().AddValue("errorDist1", errorDist1);
 
 	updateState();
 }

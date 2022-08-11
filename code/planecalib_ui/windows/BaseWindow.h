@@ -15,8 +15,7 @@
 #include <cassert>
 
 #undef ERROR //From miniglog
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+// #include <GL/freeglut.h>
 #undef ERROR //From miniglog
 
 #include <planecalib/log.h>
