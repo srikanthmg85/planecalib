@@ -112,7 +112,7 @@ void PlaneCalibApp::processFiducialMatches()
 
 	// MYAPP_LOG << "Calibrating camera with homographies\n";
 	// mFiducialSystem->calibrate();
-	// mFiducialSystem->doHomographyBA();
+	mFiducialSystem->doHomographyBA();
 	mFiducialSystem->doHomographyCalib(false);
 	mFiducialSystem->doFullBA();
 
